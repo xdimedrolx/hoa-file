@@ -38,14 +38,15 @@ declare(strict_types=1);
 
 namespace Hoa\File;
 
-use Hoa\Stream;
+use Hoa\Stream\Stream;
+use Hoa\Stream\IStream;
 
 /**
  * Class \Hoa\File\Generic.
  *
  * Describe a super-file.
  */
-abstract class Generic extends Stream implements Stream\IStream\Pathable, Stream\IStream\Statable, Stream\IStream\Touchable
+abstract class Generic extends Stream implements IStream\Pathable, IStream\Statable, IStream\Touchable
 {
     /**
      * Mode.
@@ -76,7 +77,7 @@ abstract class Generic extends Stream implements Stream\IStream\Pathable, Stream
     public function getSize(): int
     {
         if (false === $this->getStatistic()) {
-            return false;
+            return 0;
         }
 
         return filesize($this->getStreamName());
@@ -252,11 +253,11 @@ abstract class Generic extends Stream implements Stream\IStream\Pathable, Stream
      * Copy file.
      * Return the destination file path if succeed, false otherwise.
      */
-    public function copy(string $to, bool $force = Stream\IStream\Touchable::DO_NOT_OVERWRITE): bool
+    public function copy(string $to, bool $force = IStream\Touchable::DO_NOT_OVERWRITE): bool
     {
         $from = $this->getStreamName();
 
-        if ($force === Stream\IStream\Touchable::DO_NOT_OVERWRITE &&
+        if ($force === IStream\Touchable::DO_NOT_OVERWRITE &&
             true === file_exists($to)) {
             return true;
         }
@@ -273,17 +274,17 @@ abstract class Generic extends Stream implements Stream\IStream\Pathable, Stream
      */
     public function move(
         string $name,
-        bool $force = Stream\IStream\Touchable::DO_NOT_OVERWRITE,
-        bool $mkdir = Stream\IStream\Touchable::DO_NOT_MAKE_DIRECTORY
+        bool $force = IStream\Touchable::DO_NOT_OVERWRITE,
+        bool $mkdir = IStream\Touchable::DO_NOT_MAKE_DIRECTORY
     ): bool {
         $from = $this->getStreamName();
 
-        if ($force === Stream\IStream\Touchable::DO_NOT_OVERWRITE &&
+        if ($force === IStream\Touchable::DO_NOT_OVERWRITE &&
             true === file_exists($name)) {
             return false;
         }
 
-        if (Stream\IStream\Touchable::MAKE_DIRECTORY === $mkdir) {
+        if (IStream\Touchable::MAKE_DIRECTORY === $mkdir) {
             Directory::create(
                 dirname($name),
                 Directory::MODE_CREATE_RECURSIVE
